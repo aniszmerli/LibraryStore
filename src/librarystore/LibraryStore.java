@@ -1,12 +1,12 @@
 package librarystore;
 
-import ui.LoginFrame;
+import ui.Loginframe;
 import javax.swing.SwingUtilities;
 
 public class LibraryStore {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new LoginFrame().setVisible(true);
+            new Loginframe().setVisible(true);
         });
     }
 }

@@ -3,7 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Anis/Documents/NetBeansProjects/LibraryStore/src/librarystore/LibraryStore.java</file>
+            <file>file:/C:/Users/Anis/Documents/NetBeansProjects/LibraryStore/src/ui/Loginframe.java</file>
+            <file>file:/C:/Users/Anis/Documents/NetBeansProjects/LibraryStore/src/ui/CartFrame.java</file>
+            <file>file:/C:/Users/Anis/Documents/NetBeansProjects/LibraryStore/src/ui/RegisterFrame.java</file>
+            <file>file:/C:/Users/Anis/Documents/NetBeansProjects/LibraryStore/src/ui/OrderHistoryFrame.java</file>
+            <file>file:/C:/Users/Anis/Documents/NetBeansProjects/LibraryStore/src/ui/HomeFrame.java</file>
+            <file>file:/C:/Users/Anis/Documents/NetBeansProjects/LibraryStore/src/ui/AdminFrame.java</file>
         </group>
     </open-files>
 </project-private>

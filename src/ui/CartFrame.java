@@ -1,103 +1,59 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
 package ui;
 
 import dao.OrderDAO;
+import java.util.List;
 import models.OrderItem;
 import models.User;
 
-import javax.swing.*;
-import javax.swing.table.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
+/**
+ *
+ * @author Anis
+ */
+public class CartFrame extends javax.swing.JFrame {
 
-public class CartFrame extends JFrame {
-
+    /**
+     * Creates new form CartFrame
+     */
     private final User currentUser;
     private final List<OrderItem> cart;
-
-    private JTable cartTable;
-    private DefaultTableModel tableModel;
-    private JLabel lblTotal;
+    private javax.swing.table.DefaultTableModel tableModel;
 
     public CartFrame(User user, List<OrderItem> cart) {
         this.currentUser = user;
         this.cart = cart;
-        setTitle("Library Store — Shopping Cart");
-        setSize(750, 500);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initComponents();
+        setupTable();
+        cartTable.setRowHeight(32);
+        getContentPane().setBackground(new java.awt.Color(44, 62, 80));
+
+        cartTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", 1, 13));
+        cartTable.getTableHeader().setBackground(new java.awt.Color(44, 62, 80));
+        cartTable.getTableHeader().setForeground(new java.awt.Color(96, 96, 96));
+        cartTable.setRowHeight(30);
+        cartTable.setGridColor(new java.awt.Color(236, 240, 241));
+        cartTable.setSelectionBackground(new java.awt.Color(214, 234, 248));
+        cartTable.setSelectionForeground(java.awt.Color.BLACK);
+        setLocationRelativeTo(null);
         refreshCart();
+
     }
 
-    private void initComponents() {
-        setLayout(new BorderLayout());
-
-        // Header
-        JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(new Color(0x27AE60));
-        header.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
-        JLabel lblTitle = new JLabel("🛒  Your Shopping Cart");
-        lblTitle.setFont(new Font("Georgia", Font.BOLD, 20));
-        lblTitle.setForeground(Color.WHITE);
-        header.add(lblTitle, BorderLayout.WEST);
-
-        // Table
-        String[] cols = {"#", "Product", "Unit Price", "Qty", "Subtotal"};
-        tableModel = new DefaultTableModel(cols, 0) {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+    private void setupTable() {
+        tableModel = new javax.swing.table.DefaultTableModel(
+                new String[]{"#", "Product", "Unit Price", "Qty", "Subtotal"}, 0) {
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
-        cartTable = new JTable(tableModel);
-        cartTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        cartTable.setRowHeight(32);
-        cartTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        cartTable.getTableHeader().setBackground(new Color(0x2ECC71));
-        cartTable.getTableHeader().setForeground(Color.WHITE);
-        cartTable.setSelectionBackground(new Color(0xD5F5E3));
-        cartTable.setGridColor(new Color(0xECF0F1));
-
-        int[] widths = {40, 260, 100, 80, 100};
-        for (int i = 0; i < widths.length; i++)
+        cartTable.setModel(tableModel);
+        int[] widths = {40, 270, 110, 80, 110};
+        for (int i = 0; i < widths.length; i++) {
             cartTable.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
-
-        JScrollPane scroll = new JScrollPane(cartTable);
-        scroll.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
-
-        // Bottom panel
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.setBackground(new Color(0xF8F9FA));
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 15, 20));
-
-        lblTotal = new JLabel("Total: $0.00");
-        lblTotal.setFont(new Font("Georgia", Font.BOLD, 18));
-        lblTotal.setForeground(new Color(0x2C3E50));
-
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        btnPanel.setOpaque(false);
-
-        JButton btnRemove = createBtn("🗑 Remove Item", new Color(0xE74C3C));
-        JButton btnClear  = createBtn("Clear Cart", new Color(0x95A5A6));
-        JButton btnCheckout = createBtn("✔ Checkout", new Color(0x27AE60));
-        btnCheckout.setFont(new Font("Segoe UI", Font.BOLD, 14));
-
-        btnPanel.add(btnRemove);
-        btnPanel.add(btnClear);
-        btnPanel.add(btnCheckout);
-
-        bottomPanel.add(lblTotal, BorderLayout.WEST);
-        bottomPanel.add(btnPanel, BorderLayout.EAST);
-
-        add(header, BorderLayout.NORTH);
-        add(scroll, BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
-
-        // Listeners
-        btnRemove.addActionListener(e -> removeSelected());
-        btnClear.addActionListener(e -> {
-            cart.clear();
-            refreshCart();
-        });
-        btnCheckout.addActionListener(e -> checkout());
+        }
     }
 
     private void refreshCart() {
@@ -106,76 +62,205 @@ public class CartFrame extends JFrame {
         int i = 1;
         for (OrderItem item : cart) {
             tableModel.addRow(new Object[]{
-                i++,
-                item.getProduct().getName(),
+                i++, item.getProduct().getName(),
                 String.format("$%.2f", item.getUnitPrice()),
                 item.getQuantity(),
                 String.format("$%.2f", item.getSubtotal())
             });
             total += item.getSubtotal();
         }
-        lblTotal.setText(String.format("Total: $%.2f", total));
-
-        if (cart.isEmpty()) {
-            lblTotal.setText("Your cart is empty.");
-        }
+        lblTotal.setText(cart.isEmpty() ? "Cart is empty"
+                : String.format("Total: $%.2f", total));
     }
 
-    private void removeSelected() {
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        lblTitle = new javax.swing.JLabel();
+        scrollPane = new javax.swing.JScrollPane();
+        cartTable = new javax.swing.JTable();
+        lblTotal = new javax.swing.JLabel();
+        btnRemove = new javax.swing.JButton();
+        btnClear = new javax.swing.JButton();
+        btnCheckout = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Library Store — Shopping Cart");
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblTitle.setBackground(new java.awt.Color(39, 174, 96));
+        lblTitle.setFont(new java.awt.Font("Georgia", 1, 20)); // NOI18N
+        lblTitle.setForeground(new java.awt.Color(255, 255, 255));
+        lblTitle.setText("🛒  Your Shopping Cart");
+        lblTitle.setPreferredSize(new java.awt.Dimension(750, 55));
+        getContentPane().add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+
+        scrollPane.setPreferredSize(new java.awt.Dimension(730, 330));
+
+        cartTable.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        cartTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        scrollPane.setViewportView(cartTable);
+
+        getContentPane().add(scrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 65, -1, -1));
+
+        lblTotal.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
+        lblTotal.setForeground(new java.awt.Color(44, 62, 80));
+        lblTotal.setText("Total: $0.00");
+        lblTotal.setPreferredSize(new java.awt.Dimension(250, 35));
+        getContentPane().add(lblTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 410, -1, -1));
+
+        btnRemove.setBackground(new java.awt.Color(231, 76, 60));
+        btnRemove.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnRemove.setForeground(new java.awt.Color(255, 255, 255));
+        btnRemove.setText("🗑 Remove");
+        btnRemove.setBorderPainted(false);
+        btnRemove.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRemove.setFocusPainted(false);
+        btnRemove.setPreferredSize(new java.awt.Dimension(110, 35));
+        btnRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnRemove, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 410, -1, -1));
+
+        btnClear.setBackground(new java.awt.Color(149, 165, 166));
+        btnClear.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnClear.setForeground(new java.awt.Color(255, 255, 255));
+        btnClear.setText("Clear Cart");
+        btnClear.setBorderPainted(false);
+        btnClear.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClear.setFocusPainted(false);
+        btnClear.setPreferredSize(new java.awt.Dimension(110, 35));
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnClear, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 410, -1, -1));
+
+        btnCheckout.setBackground(new java.awt.Color(39, 174, 96));
+        btnCheckout.setForeground(new java.awt.Color(255, 255, 255));
+        btnCheckout.setText("✔ Checkout");
+        btnCheckout.setBorderPainted(false);
+        btnCheckout.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCheckout.setFocusPainted(false);
+        btnCheckout.setPreferredSize(new java.awt.Dimension(120, 35));
+        btnCheckout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCheckoutActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnCheckout, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 410, -1, -1));
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
         int row = cartTable.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Select an item to remove.");
+            javax.swing.JOptionPane.showMessageDialog(this, "Select an item to remove.");
             return;
         }
         cart.remove(row);
-        refreshCart();
-    }
+        refreshCart();    }//GEN-LAST:event_btnRemoveActionPerformed
 
-    private void checkout() {
-        if (cart.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Your cart is empty!", "Empty Cart", JOptionPane.WARNING_MESSAGE);
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        cart.clear();
+        refreshCart();    }//GEN-LAST:event_btnClearActionPerformed
+
+    private void btnCheckoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckoutActionPerformed
+        if (currentUser == null) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "You must be logged in to checkout.");
             return;
         }
 
-        double total = cart.stream().mapToDouble(OrderItem::getSubtotal).sum();
-        int confirm = JOptionPane.showConfirmDialog(this,
-            String.format("Confirm order?\n\nItems: %d\nTotal: $%.2f\n\nProceed to checkout?",
-                cart.size(), total),
-            "Confirm Order", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (cart.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Cart is empty.");
+            return;
+        }
 
-        if (confirm != JOptionPane.YES_OPTION) return;
+        double total = cart.stream()
+                .mapToDouble(OrderItem::getSubtotal)
+                .sum();
 
-        OrderDAO orderDAO = new OrderDAO();
-        int orderId = orderDAO.placeOrder(currentUser.getId(), cart, total);
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
+                "Confirm order?\nTotal: $" + total,
+                "Confirm",
+                javax.swing.JOptionPane.YES_NO_OPTION);
+
+        if (confirm != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        OrderDAO dao = new OrderDAO();
+        int orderId = dao.placeOrder(currentUser.getId(), cart, total);
 
         if (orderId > 0) {
-            JOptionPane.showMessageDialog(this,
-                "✅ Order placed successfully!\nOrder ID: #" + orderId +
-                "\n\nThank you for shopping at Library Store!",
-                "Order Confirmed", JOptionPane.INFORMATION_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Order placed! ID: " + orderId);
             cart.clear();
             refreshCart();
             dispose();
         } else {
-            JOptionPane.showMessageDialog(this,
-                "❌ Order failed. Some items may be out of stock.\nPlease review your cart.",
-                "Order Failed", JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Order failed.");
+}    }//GEN-LAST:event_btnCheckoutActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(CartFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(CartFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(CartFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(CartFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new CartFrame(currentUser, cart).setVisible(true);
+            }
+        });
     }
 
-    private JButton createBtn(String text, Color bg) {
-        JButton btn = new JButton(text);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btn.setBackground(bg);
-        btn.setForeground(Color.WHITE);
-        btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
-        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btn.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
-        btn.addMouseListener(new MouseAdapter() {
-            @Override public void mouseEntered(MouseEvent e) { btn.setBackground(bg.darker()); }
-            @Override public void mouseExited(MouseEvent e)  { btn.setBackground(bg); }
-        });
-        return btn;
-    }
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCheckout;
+    private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnRemove;
+    private javax.swing.JTable cartTable;
+    private javax.swing.JLabel lblTitle;
+    private javax.swing.JLabel lblTotal;
+    private javax.swing.JScrollPane scrollPane;
+    // End of variables declaration//GEN-END:variables
 }

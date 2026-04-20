@@ -1,92 +1,86 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
 package ui;
 
 import dao.OrderDAO;
 import models.User;
 
-import javax.swing.*;
-import javax.swing.table.*;
-import java.awt.*;
+/**
+ *
+ * @author Anis
+ */
+public class OrderHistoryFrame extends javax.swing.JFrame {
 
-public class OrderHistoryFrame extends JFrame {
-
+    /**
+     * Creates new form OrderHistoryFrame
+     */
     private final User currentUser;
-    private DefaultTableModel tableModel;
+    private javax.swing.table.DefaultTableModel tableModel;
 
     public OrderHistoryFrame(User user) {
         this.currentUser = user;
-        setTitle("Library Store — My Orders");
-        setSize(680, 420);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initComponents();
+        setupTable();
+        orderTable.setRowHeight(32);
+        getContentPane().setBackground(new java.awt.Color(44, 62, 80));
+
+        orderTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", 1, 13));
+        orderTable.getTableHeader().setBackground(new java.awt.Color(44, 62, 80));
+        orderTable.getTableHeader().setForeground(new java.awt.Color(96, 96, 96));
+        orderTable.setRowHeight(30);
+        orderTable.setGridColor(new java.awt.Color(236, 240, 241));
+        orderTable.setSelectionBackground(new java.awt.Color(214, 234, 248));
+        orderTable.setSelectionForeground(java.awt.Color.BLACK);
+        lblTitle.setText("📋  My Order History — "
+                + (user != null ? user.getFullName() : ""));
+        setLocationRelativeTo(null);
+        loadOrders();
     }
 
-    private void initComponents() {
-        setLayout(new BorderLayout());
-
-        // Header
-        JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(new Color(0x8E44AD));
-        header.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
-        JLabel lblTitle = new JLabel("📋  My Order History — " + currentUser.getFullName());
-        lblTitle.setFont(new Font("Georgia", Font.BOLD, 18));
-        lblTitle.setForeground(Color.WHITE);
-        header.add(lblTitle, BorderLayout.WEST);
-
-        // Table
-        String[] cols = {"Order ID", "Total", "Status", "Date"};
-        tableModel = new DefaultTableModel(cols, 0) {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+    private void setupTable() {
+        tableModel = new javax.swing.table.DefaultTableModel(
+                new String[]{"Order ID", "Total", "Status", "Date"}, 0) {
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
-        JTable table = new JTable(tableModel);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        table.setRowHeight(30);
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        table.getTableHeader().setBackground(new Color(0x8E44AD));
-        table.getTableHeader().setForeground(Color.WHITE);
-        table.setSelectionBackground(new Color(0xE8DAEF));
-        table.setGridColor(new Color(0xECF0F1));
+        orderTable.setModel(tableModel);
+        int[] widths = {90, 110, 120, 220};
+        for (int i = 0; i < widths.length; i++) {
+            orderTable.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
+        }
 
         // Color rows by status
-        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+        orderTable.setDefaultRenderer(Object.class,
+                new javax.swing.table.DefaultTableCellRenderer() {
             @Override
-            public Component getTableCellRendererComponent(JTable t, Object v, boolean sel, boolean foc, int r, int c) {
-                Component comp = super.getTableCellRendererComponent(t, v, sel, foc, r, c);
-                if (!sel) {
-                    String status = (String) tableModel.getValueAt(r, 2);
+            public java.awt.Component getTableCellRendererComponent(
+                    javax.swing.JTable t, Object v, boolean sel,
+                    boolean foc, int r, int c) {
+                java.awt.Component comp
+                        = super.getTableCellRendererComponent(t, v, sel, foc, r, c);
+                if (!sel && tableModel.getRowCount() > r) {
+                    String status = tableModel.getValueAt(r, 2).toString();
                     switch (status) {
-                        case "confirmed" -> comp.setBackground(new Color(0xD5F5E3));
-                        case "pending"   -> comp.setBackground(new Color(0xFEF9E7));
-                        case "cancelled" -> comp.setBackground(new Color(0xFADCDC));
-                        default          -> comp.setBackground(Color.WHITE);
+                        case "confirmed":
+                            comp.setBackground(new java.awt.Color(213, 245, 227));
+                            break;
+                        case "pending":
+                            comp.setBackground(new java.awt.Color(254, 249, 231));
+                            break;
+                        case "cancelled":
+                            comp.setBackground(new java.awt.Color(250, 220, 220));
+                            break;
+                        default:
+                            comp.setBackground(java.awt.Color.WHITE);
+                            break;
                     }
                 }
                 return comp;
             }
         });
-
-        JScrollPane scroll = new JScrollPane(table);
-        scroll.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        // Empty state
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        footer.setBackground(new Color(0xF4F6F7));
-        footer.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        JButton btnClose = new JButton("Close");
-        btnClose.setBackground(new Color(0x8E44AD));
-        btnClose.setForeground(Color.WHITE);
-        btnClose.setFocusPainted(false);
-        btnClose.setBorderPainted(false);
-        btnClose.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnClose.setBorder(BorderFactory.createEmptyBorder(7, 20, 7, 20));
-        btnClose.addActionListener(e -> dispose());
-        footer.add(btnClose);
-
-        add(header, BorderLayout.NORTH);
-        add(scroll, BorderLayout.CENTER);
-        add(footer, BorderLayout.SOUTH);
-
-        loadOrders();
     }
 
     private void loadOrders() {
@@ -96,7 +90,116 @@ public class OrderHistoryFrame extends JFrame {
         if (orders.isEmpty()) {
             tableModel.addRow(new String[]{"—", "—", "No orders yet", "—"});
         } else {
-            for (String[] row : orders) tableModel.addRow(row);
+            for (String[] row : orders) {
+                tableModel.addRow(row);
+            }
         }
     }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        lblTitle = new javax.swing.JLabel();
+        scrollPane = new javax.swing.JScrollPane();
+        orderTable = new javax.swing.JTable();
+        btnClose = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Library Store — My Orders");
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblTitle.setBackground(new java.awt.Color(142, 68, 173));
+        lblTitle.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
+        lblTitle.setForeground(new java.awt.Color(255, 255, 255));
+        lblTitle.setText("📋  My Order History");
+        lblTitle.setPreferredSize(new java.awt.Dimension(680, 50));
+        getContentPane().add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+
+        scrollPane.setPreferredSize(new java.awt.Dimension(660, 300));
+
+        orderTable.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        orderTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        scrollPane.setViewportView(orderTable);
+
+        getContentPane().add(scrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
+
+        btnClose.setBackground(new java.awt.Color(142, 68, 173));
+        btnClose.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnClose.setForeground(new java.awt.Color(255, 255, 255));
+        btnClose.setText("Close");
+        btnClose.setBorderPainted(false);
+        btnClose.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClose.setFocusPainted(false);
+        btnClose.setPreferredSize(new java.awt.Dimension(110, 35));
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnClose, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 375, -1, -1));
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        dispose();
+    }//GEN-LAST:event_btnCloseActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(OrderHistoryFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(OrderHistoryFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(OrderHistoryFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(OrderHistoryFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new OrderHistoryFrame().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnClose;
+    private javax.swing.JLabel lblTitle;
+    private javax.swing.JTable orderTable;
+    private javax.swing.JScrollPane scrollPane;
+    // End of variables declaration//GEN-END:variables
 }

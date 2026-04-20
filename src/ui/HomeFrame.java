@@ -1,270 +1,366 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
 package ui;
 
 import dao.ProductDAO;
+import java.util.ArrayList;
+import java.util.List;
 import models.OrderItem;
 import models.Product;
 import models.User;
 
-import javax.swing.*;
-import javax.swing.table.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.List;
-
-public class HomeFrame extends JFrame {
+/**
+ *
+ * @author Anis
+ */
+public class HomeFrame extends javax.swing.JFrame {
 
     private final User currentUser;
     private final List<OrderItem> cart = new ArrayList<>();
-
-    private JTable productTable;
-    private DefaultTableModel tableModel;
-    private JTextField txtSearch;
-    private JComboBox<String> cmbCategory;
-    private JLabel lblCartCount;
-
     private final ProductDAO productDAO = new ProductDAO();
+    private javax.swing.table.DefaultTableModel tableModel;
 
     public HomeFrame(User user) {
         this.currentUser = user;
-        setTitle("Library Store — Catalog");
-        setSize(900, 620);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
         initComponents();
+        lblWelcome.setText("Hello, " + (user != null ? user.getFullName() : "Guest"));
+        setupTable();
+        getContentPane().setBackground(new java.awt.Color(44, 62, 80));
+        setLocationRelativeTo(null);
         loadProducts(productDAO.getAllProducts());
     }
 
-    private void initComponents() {
-        setLayout(new BorderLayout());
-
-        // ── TOP BAR ──────────────────────────────────────────────
-        JPanel topBar = new JPanel(new BorderLayout());
-        topBar.setBackground(new Color(0x2C3E50));
-        topBar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-
-        JLabel lblLogo = new JLabel("📚 Library Store");
-        lblLogo.setFont(new Font("Georgia", Font.BOLD, 20));
-        lblLogo.setForeground(Color.WHITE);
-
-        JPanel rightBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        rightBar.setOpaque(false);
-
-        JLabel lblUser = new JLabel("Hello, " + currentUser.getFullName());
-        lblUser.setForeground(new Color(0xBDC3C7));
-        lblUser.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-
-        JButton btnCart = createTopBtn("🛒 Cart (0)");
-        lblCartCount = new JLabel("0");
-        btnCart.setText("🛒 Cart (0)");
-        btnCart.addActionListener(e -> openCart());
-
-        JButton btnOrders = createTopBtn("📋 My Orders");
-        btnOrders.addActionListener(e -> openOrders());
-
-        JButton btnLogout = createTopBtn("Logout");
-        btnLogout.addActionListener(e -> { dispose(); new LoginFrame().setVisible(true); });
-
-        rightBar.add(lblUser);
-        rightBar.add(btnCart);
-        rightBar.add(btnOrders);
-        rightBar.add(btnLogout);
-
-        topBar.add(lblLogo, BorderLayout.WEST);
-        topBar.add(rightBar, BorderLayout.EAST);
-
-        // ── SEARCH/FILTER BAR ────────────────────────────────────
-        JPanel filterBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
-        filterBar.setBackground(new Color(0xECF0F1));
-        filterBar.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-
-        txtSearch = new JTextField(20);
-        txtSearch.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        txtSearch.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(0xBDC3C7)),
-            BorderFactory.createEmptyBorder(4, 8, 4, 8)
-        ));
-
-        JButton btnSearch = new JButton("🔍 Search");
-        btnSearch.setBackground(new Color(0x3498DB));
-        btnSearch.setForeground(Color.WHITE);
-        btnSearch.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btnSearch.setFocusPainted(false);
-        btnSearch.setBorderPainted(false);
-        btnSearch.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        String[] cats = {"All Categories", "book", "notebook", "pen", "stationery", "other"};
-        cmbCategory = new JComboBox<>(cats);
-        cmbCategory.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-
-        JButton btnFilter = new JButton("Filter");
-        btnFilter.setBackground(new Color(0x8E44AD));
-        btnFilter.setForeground(Color.WHITE);
-        btnFilter.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btnFilter.setFocusPainted(false);
-        btnFilter.setBorderPainted(false);
-        btnFilter.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        JButton btnAddToCart = new JButton("➕ Add to Cart");
-        btnAddToCart.setBackground(new Color(0x27AE60));
-        btnAddToCart.setForeground(Color.WHITE);
-        btnAddToCart.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btnAddToCart.setFocusPainted(false);
-        btnAddToCart.setBorderPainted(false);
-        btnAddToCart.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        filterBar.add(new JLabel("Search:"));
-        filterBar.add(txtSearch);
-        filterBar.add(btnSearch);
-        filterBar.add(Box.createHorizontalStrut(10));
-        filterBar.add(new JLabel("Category:"));
-        filterBar.add(cmbCategory);
-        filterBar.add(btnFilter);
-        filterBar.add(Box.createHorizontalStrut(20));
-        filterBar.add(btnAddToCart);
-
-        // ── PRODUCT TABLE ────────────────────────────────────────
-        String[] cols = {"ID", "Product Name", "Category", "Price", "In Stock", "Description"};
-        tableModel = new DefaultTableModel(cols, 0) {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+    private void setupTable() {
+        tableModel = new javax.swing.table.DefaultTableModel(
+                new String[]{"ID", "Product Name", "Category", "Price", "In Stock", "Description"}, 0) {
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
-        productTable = new JTable(tableModel);
-        productTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        productTable.setRowHeight(30);
-        productTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        productTable.getTableHeader().setBackground(new Color(0x2C3E50));
-        productTable.getTableHeader().setForeground(Color.WHITE);
-        productTable.setSelectionBackground(new Color(0xD6EAF8));
-        productTable.setSelectionForeground(Color.BLACK);
-        productTable.setGridColor(new Color(0xECF0F1));
-
-        // Column widths
-        int[] widths = {40, 200, 100, 80, 80, 250};
-        for (int i = 0; i < widths.length; i++)
-            productTable.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
-
-        JScrollPane scrollPane = new JScrollPane(productTable);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-
-        // ── BOTTOM STATUS BAR ────────────────────────────────────
-        JPanel statusBar = new JPanel(new BorderLayout());
-        statusBar.setBackground(new Color(0x2C3E50));
-        statusBar.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
-        JLabel lblStatus = new JLabel("Browse our collection — select a product and click Add to Cart");
-        lblStatus.setForeground(new Color(0xBDC3C7));
-        lblStatus.setFont(new Font("Segoe UI", Font.ITALIC, 11));
-        statusBar.add(lblStatus, BorderLayout.WEST);
-
-        // Assemble
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(filterBar, BorderLayout.NORTH);
-        centerPanel.add(scrollPane, BorderLayout.CENTER);
-
-        add(topBar, BorderLayout.NORTH);
-        add(centerPanel, BorderLayout.CENTER);
-        add(statusBar, BorderLayout.SOUTH);
-
-        // ── LISTENERS ────────────────────────────────────────────
-        btnSearch.addActionListener(e -> {
-            String kw = txtSearch.getText().trim();
-            if (kw.isEmpty()) loadProducts(productDAO.getAllProducts());
-            else loadProducts(productDAO.searchProducts(kw));
-        });
-
-        btnFilter.addActionListener(e -> {
-            String cat = (String) cmbCategory.getSelectedItem();
-            if ("All Categories".equals(cat)) loadProducts(productDAO.getAllProducts());
-            else loadProducts(productDAO.getByCategory(cat));
-        });
-
-        btnAddToCart.addActionListener(e -> addSelectedToCart(btnCart));
-
-        txtSearch.addActionListener(e -> btnSearch.doClick());
+        jTable1.setModel(tableModel);
+        jTable1.getTableHeader().setFont(new java.awt.Font("Segoe UI", 1, 13));
+        jTable1.getTableHeader().setBackground(new java.awt.Color(44, 62, 80));
+        jTable1.getTableHeader().setForeground(new java.awt.Color(96, 96, 96));
+        jTable1.setRowHeight(30);
+        jTable1.setGridColor(new java.awt.Color(236, 240, 241));
+        jTable1.setSelectionBackground(new java.awt.Color(214, 234, 248));
+        jTable1.setSelectionForeground(java.awt.Color.BLACK);
+        int[] widths = {40, 210, 100, 80, 80, 250};
+        for (int i = 0; i < widths.length; i++) {
+            jTable1.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
+        }
     }
 
     private void loadProducts(List<Product> products) {
         tableModel.setRowCount(0);
         for (Product p : products) {
             tableModel.addRow(new Object[]{
-                p.getId(),
-                p.getName(),
-                p.getCategory(),
-                String.format("$%.2f", p.getPrice()),
-                p.getStock(),
-                p.getDescription()
+                p.getId(), p.getName(), p.getCategory(),
+                String.format(java.util.Locale.US, "$%.2f", p.getPrice()), p.getStock(), p.getDescription()
             });
         }
     }
 
-    private void addSelectedToCart(JButton btnCart) {
-        int row = productTable.getSelectedRow();
+    private void updateCartBtn() {
+        int total = cart.stream().mapToInt(OrderItem::getQuantity).sum();
+        btnCart.setText("🛒 Cart (" + total + ")");
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        lblLogo = new javax.swing.JLabel();
+        lblWelcome = new javax.swing.JLabel();
+        btnCart = new javax.swing.JButton();
+        btnOrders = new javax.swing.JButton();
+        btnLogout = new javax.swing.JButton();
+        lblSearch = new javax.swing.JLabel();
+        txtSearch = new javax.swing.JTextField();
+        btnSearch = new javax.swing.JButton();
+        lblCategory = new javax.swing.JLabel();
+        cmbCategory = new javax.swing.JComboBox<>();
+        btnFilter = new javax.swing.JButton();
+        btnAddToCart = new javax.swing.JButton();
+        productTable = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        lblStatus = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(44, 62, 80));
+        setPreferredSize(new java.awt.Dimension(900, 620));
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblLogo.setFont(new java.awt.Font("Georgia", 1, 20)); // NOI18N
+        lblLogo.setForeground(new java.awt.Color(255, 255, 255));
+        lblLogo.setText("📚 Library Store");
+        lblLogo.setPreferredSize(new java.awt.Dimension(220, 30));
+        getContentPane().add(lblLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 15, -1, -1));
+
+        lblWelcome.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblWelcome.setForeground(new java.awt.Color(255, 255, 255));
+        lblWelcome.setText("Hello, Guest");
+        lblWelcome.setPreferredSize(new java.awt.Dimension(120, 30));
+        getContentPane().add(lblWelcome, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 15, -1, -1));
+
+        btnCart.setBackground(new java.awt.Color(61, 81, 102));
+        btnCart.setForeground(new java.awt.Color(255, 255, 255));
+        btnCart.setText("🛒 Cart (0)");
+        btnCart.setBorderPainted(false);
+        btnCart.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCart.setFocusPainted(false);
+        btnCart.setPreferredSize(new java.awt.Dimension(110, 35));
+        btnCart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCartActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnCart, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 10, -1, -1));
+
+        btnOrders.setBackground(new java.awt.Color(61, 81, 102));
+        btnOrders.setForeground(new java.awt.Color(255, 255, 255));
+        btnOrders.setText("📋 My Orders");
+        btnOrders.setBorderPainted(false);
+        btnOrders.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnOrders.setFocusPainted(false);
+        btnOrders.setPreferredSize(new java.awt.Dimension(110, 35));
+        btnOrders.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOrdersActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnOrders, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 10, -1, -1));
+
+        btnLogout.setBackground(new java.awt.Color(255, 51, 51));
+        btnLogout.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
+        btnLogout.setForeground(new java.awt.Color(255, 255, 255));
+        btnLogout.setText("Logout");
+        btnLogout.setBorderPainted(false);
+        btnLogout.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLogout.setFocusPainted(false);
+        btnLogout.setPreferredSize(new java.awt.Dimension(80, 35));
+        btnLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogoutActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 10, -1, -1));
+
+        lblSearch.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblSearch.setForeground(new java.awt.Color(255, 255, 255));
+        lblSearch.setText("Search:");
+        lblSearch.setPreferredSize(new java.awt.Dimension(60, 30));
+        getContentPane().add(lblSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 65, -1, -1));
+
+        txtSearch.setPreferredSize(new java.awt.Dimension(200, 30));
+        getContentPane().add(txtSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 65, -1, -1));
+
+        btnSearch.setBackground(new java.awt.Color(52, 152, 219));
+        btnSearch.setForeground(new java.awt.Color(255, 255, 255));
+        btnSearch.setText("🔍 Search");
+        btnSearch.setBorderPainted(false);
+        btnSearch.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSearch.setFocusPainted(false);
+        btnSearch.setPreferredSize(new java.awt.Dimension(100, 30));
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 65, -1, -1));
+
+        lblCategory.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblCategory.setForeground(new java.awt.Color(255, 255, 255));
+        lblCategory.setText("Category:");
+        lblCategory.setPreferredSize(new java.awt.Dimension(75, 30));
+        getContentPane().add(lblCategory, new org.netbeans.lib.awtextra.AbsoluteConstraints(385, 65, -1, -1));
+
+        cmbCategory.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Categories", "book", "notebook", "pen", "stationery", "other" }));
+        cmbCategory.setPreferredSize(new java.awt.Dimension(150, 30));
+        getContentPane().add(cmbCategory, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 65, -1, -1));
+
+        btnFilter.setBackground(new java.awt.Color(142, 68, 173));
+        btnFilter.setForeground(new java.awt.Color(255, 255, 255));
+        btnFilter.setText("Filter");
+        btnFilter.setBorderPainted(false);
+        btnFilter.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnFilter.setFocusPainted(false);
+        btnFilter.setPreferredSize(new java.awt.Dimension(80, 30));
+        btnFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFilterActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnFilter, new org.netbeans.lib.awtextra.AbsoluteConstraints(615, 65, -1, -1));
+
+        btnAddToCart.setBackground(new java.awt.Color(39, 174, 96));
+        btnAddToCart.setForeground(new java.awt.Color(255, 255, 255));
+        btnAddToCart.setText("➕ Add to Cart");
+        btnAddToCart.setBorderPainted(false);
+        btnAddToCart.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAddToCart.setFocusPainted(false);
+        btnAddToCart.setPreferredSize(new java.awt.Dimension(140, 30));
+        btnAddToCart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddToCartActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnAddToCart, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 65, -1, -1));
+
+        productTable.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        productTable.setPreferredSize(new java.awt.Dimension(875, 450));
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        productTable.setViewportView(jTable1);
+
+        getContentPane().add(productTable, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, -1, -1));
+
+        lblStatus.setFont(new java.awt.Font("Segoe UI", 2, 11)); // NOI18N
+        lblStatus.setForeground(new java.awt.Color(189, 195, 199));
+        lblStatus.setText("Select a product and click Add to Cart");
+        lblStatus.setPreferredSize(new java.awt.Dimension(875, 25));
+        getContentPane().add(lblStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 575, -1, -1));
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
+        dispose();
+        new Loginframe().setVisible(true);
+    }//GEN-LAST:event_btnLogoutActionPerformed
+
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        String kw = txtSearch.getText().trim();
+        if (kw.isEmpty())
+            loadProducts(productDAO.getAllProducts());
+        else
+            loadProducts(productDAO.searchProducts(kw));
+    }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void btnFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterActionPerformed
+        String cat = (String) cmbCategory.getSelectedItem();
+        if ("All Categories".equals(cat))
+            loadProducts(productDAO.getAllProducts());
+        else
+            loadProducts(productDAO.getByCategory(cat));
+    }//GEN-LAST:event_btnFilterActionPerformed
+
+    private void btnAddToCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddToCartActionPerformed
+        int row = jTable1.getSelectedRow();
         if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a product first.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this, "Please select a product first.");
             return;
         }
-
         int productId = (int) tableModel.getValueAt(row, 0);
-        String name   = (String) tableModel.getValueAt(row, 1);
-        int stock     = (int) tableModel.getValueAt(row, 4);
-        String priceStr = tableModel.getValueAt(row, 3).toString().replace("$", "");
-        double price  = Double.parseDouble(priceStr);
-
+        String name = (String) tableModel.getValueAt(row, 1);
+        int stock = (int) tableModel.getValueAt(row, 4);
+        double price = Double.parseDouble(
+                tableModel.getValueAt(row, 3).toString()
+                        .replace("$", "")
+                        .replace(",", "."));
+        String category = (String) tableModel.getValueAt(row, 2);
         if (stock == 0) {
-            JOptionPane.showMessageDialog(this, "This product is out of stock.", "Out of Stock", JOptionPane.WARNING_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this, "Out of stock.");
             return;
         }
-
-        String qtyStr = JOptionPane.showInputDialog(this, "How many copies of \"" + name + "\"?", "1");
-        if (qtyStr == null) return;
-
+        String qtyStr = javax.swing.JOptionPane.showInputDialog(this, "Quantity (max " + stock + "):", "1");
+        if (qtyStr == null) {
+            return;
+        }
         int qty;
-        try { qty = Integer.parseInt(qtyStr.trim()); }
-        catch (NumberFormatException ex) { JOptionPane.showMessageDialog(this, "Invalid quantity."); return; }
-
-        if (qty < 1 || qty > stock) {
-            JOptionPane.showMessageDialog(this, "Quantity must be between 1 and " + stock + ".");
+        try {
+            qty = Integer.parseInt(qtyStr.trim());
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Invalid quantity.");
             return;
         }
-
-        Product product = new Product(productId, name, "", price, stock, "");
-
-        // Check if already in cart
+        if (qty < 1 || qty > stock) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Enter a number between 1 and " + stock + ".");
+            return;
+        }
+        Product product = new Product(productId, name, "", price, stock, category);
         for (OrderItem item : cart) {
             if (item.getProduct().getId() == productId) {
                 item.setQuantity(item.getQuantity() + qty);
-                updateCartButton(btnCart);
-                JOptionPane.showMessageDialog(this, "Updated quantity in cart ✓");
+                updateCartBtn();
+                javax.swing.JOptionPane.showMessageDialog(this, "Cart updated ✓");
                 return;
             }
         }
-
         cart.add(new OrderItem(product, qty));
-        updateCartButton(btnCart);
-        JOptionPane.showMessageDialog(this, "\"" + name + "\" added to cart! ✓", "Added", JOptionPane.INFORMATION_MESSAGE);
-    }
+        updateCartBtn();
+        javax.swing.JOptionPane.showMessageDialog(this, "\"" + name + "\" added to cart ✓");
+    }//GEN-LAST:event_btnAddToCartActionPerformed
 
-    private void updateCartButton(JButton btn) {
-        int total = cart.stream().mapToInt(OrderItem::getQuantity).sum();
-        btn.setText("🛒 Cart (" + total + ")");
-    }
-
-    private void openCart() {
+    private void btnCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCartActionPerformed
         new CartFrame(currentUser, cart).setVisible(true);
-    }
+    }//GEN-LAST:event_btnCartActionPerformed
 
-    private void openOrders() {
+    private void btnOrdersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrdersActionPerformed
         new OrderHistoryFrame(currentUser).setVisible(true);
+    }//GEN-LAST:event_btnOrdersActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(HomeFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(HomeFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(HomeFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(HomeFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new HomeFrame(null).setVisible(true);
+            }
+        });
     }
 
-    private JButton createTopBtn(String text) {
-        JButton btn = new JButton(text);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btn.setBackground(new Color(0x3D5166));
-        btn.setForeground(Color.WHITE);
-        btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
-        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btn.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
-        return btn;
-    }
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddToCart;
+    private javax.swing.JButton btnCart;
+    private javax.swing.JButton btnFilter;
+    private javax.swing.JButton btnLogout;
+    private javax.swing.JButton btnOrders;
+    private javax.swing.JButton btnSearch;
+    private javax.swing.JComboBox<String> cmbCategory;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JLabel lblCategory;
+    private javax.swing.JLabel lblLogo;
+    private javax.swing.JLabel lblSearch;
+    private javax.swing.JLabel lblStatus;
+    private javax.swing.JLabel lblWelcome;
+    private javax.swing.JScrollPane productTable;
+    private javax.swing.JTextField txtSearch;
+    // End of variables declaration//GEN-END:variables
 }

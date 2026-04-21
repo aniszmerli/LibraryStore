@@ -29,6 +29,15 @@ public class AdminFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> fCategory;
 
     public AdminFrame(User user) {
+        if (user == null || !user.isAdmin()) {
+            initComponents();
+            javax.swing.JOptionPane.showMessageDialog(null,
+                    "Access denied. Admin privileges required.", "Unauthorized",
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
+            dispose();
+            new Loginframe().setVisible(true);
+            return;
+        }
         this.adminUser = user;
         initComponents();   // NetBeans generated — do not touch
         buildUI();          // our custom UI
@@ -77,17 +86,20 @@ public class AdminFrame extends javax.swing.JFrame {
         pnlTop.add(lblTitle, java.awt.BorderLayout.WEST);
 
         javax.swing.JPanel pnlTopRight = new javax.swing.JPanel(
-            new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 10, 0));
+                new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 10, 0));
         pnlTopRight.setOpaque(false);
 
         javax.swing.JLabel lblAdminInfo = new javax.swing.JLabel(
-            "Logged in as: " + (adminUser != null ? adminUser.getUsername() : "admin") + " (Admin)");
+                "Logged in as: " + (adminUser != null ? adminUser.getUsername() : "admin") + " (Admin)");
         lblAdminInfo.setFont(new java.awt.Font("Segoe UI", 1, 12));
         lblAdminInfo.setForeground(new java.awt.Color(243, 156, 18));
         pnlTopRight.add(lblAdminInfo);
 
         javax.swing.JButton btnLogout = makeBtn("Logout", new java.awt.Color(231, 76, 60));
-        btnLogout.addActionListener(e -> { dispose(); new Loginframe().setVisible(true); });
+        btnLogout.addActionListener(e -> {
+            dispose();
+            new Loginframe().setVisible(true);
+        });
         pnlTopRight.add(btnLogout);
 
         pnlTop.add(pnlTopRight, java.awt.BorderLayout.EAST);
@@ -111,8 +123,10 @@ public class AdminFrame extends javax.swing.JFrame {
 
         // Table
         productModel = new javax.swing.table.DefaultTableModel(
-            new String[]{"ID", "Name", "Category", "Price", "Stock", "Description"}, 0) {
-            public boolean isCellEditable(int r, int c) { return false; }
+                new String[]{"ID", "Name", "Category", "Price", "Stock", "Description"}, 0) {
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
         productTable = new javax.swing.JTable(productModel);
         productTable.setFont(new java.awt.Font("Segoe UI", 0, 13));
@@ -123,12 +137,15 @@ public class AdminFrame extends javax.swing.JFrame {
         productTable.setSelectionBackground(new java.awt.Color(250, 215, 160));
         productTable.setGridColor(new java.awt.Color(229, 232, 232));
         productTable.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) populateForm();
+            if (!e.getValueIsAdjusting()) {
+                populateForm();
+            }
         });
 
         int[] widths = {40, 200, 100, 80, 70, 260};
-        for (int i = 0; i < widths.length; i++)
+        for (int i = 0; i < widths.length; i++) {
             productTable.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
+        }
 
         javax.swing.JScrollPane scroll = new javax.swing.JScrollPane(productTable);
 
@@ -137,10 +154,10 @@ public class AdminFrame extends javax.swing.JFrame {
         formPanel.setBackground(java.awt.Color.WHITE);
         formPanel.setPreferredSize(new java.awt.Dimension(290, 0));
         formPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(
-            javax.swing.BorderFactory.createLineBorder(new java.awt.Color(189, 195, 199)),
-            "Product Details",
-            javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP,
-            new java.awt.Font("Segoe UI", 1, 12), new java.awt.Color(44, 62, 80)));
+                javax.swing.BorderFactory.createLineBorder(new java.awt.Color(189, 195, 199)),
+                "Product Details",
+                javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP,
+                new java.awt.Font("Segoe UI", 1, 12), new java.awt.Color(44, 62, 80)));
 
         java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
         gbc.insets = new java.awt.Insets(5, 8, 4, 8);
@@ -149,12 +166,12 @@ public class AdminFrame extends javax.swing.JFrame {
         gbc.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gbc.weightx = 1.0;
 
-        fName     = new javax.swing.JTextField();
-        fDesc     = new javax.swing.JTextField();
-        fPrice    = new javax.swing.JTextField();
-        fStock    = new javax.swing.JTextField();
+        fName = new javax.swing.JTextField();
+        fDesc = new javax.swing.JTextField();
+        fPrice = new javax.swing.JTextField();
+        fStock = new javax.swing.JTextField();
         fCategory = new javax.swing.JComboBox<>(
-            new String[]{"book", "notebook", "pen", "stationery", "other"});
+                new String[]{"book", "notebook", "pen", "stationery", "other"});
 
         String[] labels = {"Name:", "Description:", "Price:", "Stock:", "Category:"};
         java.awt.Component[] fields = {fName, fDesc, fPrice, fStock, fCategory};
@@ -171,14 +188,14 @@ public class AdminFrame extends javax.swing.JFrame {
 
         // Buttons row
         javax.swing.JPanel btnRow = new javax.swing.JPanel(
-            new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 8));
+                new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 8));
         btnRow.setOpaque(false);
 
         javax.swing.JButton btnRefresh = makeBtn("↻ Refresh", new java.awt.Color(93, 173, 226));
-        javax.swing.JButton btnAdd     = makeBtn("➕ Add",     new java.awt.Color(39, 174, 96));
-        javax.swing.JButton btnEdit    = makeBtn("✏ Update",  new java.awt.Color(243, 156, 18));
-        javax.swing.JButton btnDelete  = makeBtn("🗑 Delete",  new java.awt.Color(231, 76, 60));
-        javax.swing.JButton btnClear   = makeBtn("Clear",     new java.awt.Color(149, 165, 166));
+        javax.swing.JButton btnAdd = makeBtn("➕ Add", new java.awt.Color(39, 174, 96));
+        javax.swing.JButton btnEdit = makeBtn("✏ Update", new java.awt.Color(243, 156, 18));
+        javax.swing.JButton btnDelete = makeBtn("🗑 Delete", new java.awt.Color(231, 76, 60));
+        javax.swing.JButton btnClear = makeBtn("Clear", new java.awt.Color(149, 165, 166));
 
         btnRefresh.addActionListener(e -> refreshProducts());
         btnClear.addActionListener(e -> clearForm());
@@ -216,8 +233,10 @@ public class AdminFrame extends javax.swing.JFrame {
         panel.setBackground(new java.awt.Color(244, 246, 247));
 
         orderModel = new javax.swing.table.DefaultTableModel(
-            new String[]{"Order ID", "Customer", "Product", "Qty", "Total", "Date"}, 0) {
-            public boolean isCellEditable(int r, int c) { return false; }
+                new String[]{"Order ID", "Customer", "Product", "Qty", "Total", "Date"}, 0) {
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
         orderTable = new javax.swing.JTable(orderModel);
         orderTable.setFont(new java.awt.Font("Segoe UI", 0, 13));
@@ -229,14 +248,15 @@ public class AdminFrame extends javax.swing.JFrame {
         orderTable.setGridColor(new java.awt.Color(229, 232, 232));
 
         int[] widths = {80, 150, 100, 100, 200};
-        for (int i = 0; i < widths.length; i++)
+        for (int i = 0; i < widths.length; i++) {
             orderTable.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
+        }
 
         javax.swing.JPanel topRow = new javax.swing.JPanel(
-            new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+                new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
         topRow.setOpaque(false);
         javax.swing.JButton btnRefreshOrders = makeBtn("↻ Refresh Orders",
-            new java.awt.Color(93, 173, 226));
+                new java.awt.Color(93, 173, 226));
         btnRefreshOrders.addActionListener(e -> refreshOrders());
         topRow.add(btnRefreshOrders);
 
@@ -246,7 +266,6 @@ public class AdminFrame extends javax.swing.JFrame {
     }
 
     // ── Helper Methods ─────────────────────────────────────────────
-
     private void refreshProducts() {
         productModel.setRowCount(0);
         for (Product p : productDAO.getAllProducts()) {
@@ -259,12 +278,16 @@ public class AdminFrame extends javax.swing.JFrame {
 
     private void refreshOrders() {
         orderModel.setRowCount(0);
-        for (String[] row : orderDAO.getAllOrders()) orderModel.addRow(row);
+        for (String[] row : orderDAO.getAllOrders()) {
+            orderModel.addRow(row);
+        }
     }
 
     private void populateForm() {
         int row = productTable.getSelectedRow();
-        if (row == -1) return;
+        if (row == -1) {
+            return;
+        }
         fName.setText((String) productModel.getValueAt(row, 1));
         fCategory.setSelectedItem(productModel.getValueAt(row, 2));
         fPrice.setText(productModel.getValueAt(row, 3).toString().replace("$", ""));
@@ -273,20 +296,26 @@ public class AdminFrame extends javax.swing.JFrame {
     }
 
     private void clearForm() {
-        fName.setText(""); fDesc.setText(""); fPrice.setText("");
-        fStock.setText(""); fCategory.setSelectedIndex(0);
+        fName.setText("");
+        fDesc.setText("");
+        fPrice.setText("");
+        fStock.setText("");
+        fCategory.setSelectedIndex(0);
         productTable.clearSelection();
     }
 
     private void addProduct() {
         Product p = buildProduct();
-        if (p == null) return;
+        if (p == null) {
+            return;
+        }
         if (productDAO.addProduct(p)) {
             javax.swing.JOptionPane.showMessageDialog(this, "Product added!");
-            clearForm(); refreshProducts();
+            clearForm();
+            refreshProducts();
         } else {
             javax.swing.JOptionPane.showMessageDialog(this, "Failed to add.",
-                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -297,14 +326,17 @@ public class AdminFrame extends javax.swing.JFrame {
             return;
         }
         Product p = buildProduct();
-        if (p == null) return;
+        if (p == null) {
+            return;
+        }
         p.setId((int) productModel.getValueAt(row, 0));
         if (productDAO.updateProduct(p)) {
             javax.swing.JOptionPane.showMessageDialog(this, "Product updated!");
-            clearForm(); refreshProducts();
+            clearForm();
+            refreshProducts();
         } else {
             javax.swing.JOptionPane.showMessageDialog(this, "Update failed.",
-                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -317,41 +349,50 @@ public class AdminFrame extends javax.swing.JFrame {
         String name = (String) productModel.getValueAt(row, 1);
         int id = (int) productModel.getValueAt(row, 0);
         int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
-            "Delete \"" + name + "\"?", "Confirm", javax.swing.JOptionPane.YES_NO_OPTION);
-        if (confirm != javax.swing.JOptionPane.YES_OPTION) return;
+                "Delete \"" + name + "\"?", "Confirm", javax.swing.JOptionPane.YES_NO_OPTION);
+        if (confirm != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
         if (productDAO.deleteProduct(id)) {
             javax.swing.JOptionPane.showMessageDialog(this, "Product deleted.");
-            clearForm(); refreshProducts();
+            clearForm();
+            refreshProducts();
         } else {
             javax.swing.JOptionPane.showMessageDialog(this, "Delete failed.",
-                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private Product buildProduct() {
-        String name     = fName.getText().trim();
-        String desc     = fDesc.getText().trim();
+        String name = fName.getText().trim();
+        String desc = fDesc.getText().trim();
         String priceStr = fPrice.getText().trim();
         String stockStr = fStock.getText().trim();
-        String cat      = (String) fCategory.getSelectedItem();
+        String cat = (String) fCategory.getSelectedItem();
         if (name.isEmpty() || priceStr.isEmpty() || stockStr.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this, "Name, price and stock are required.");
             return null;
         }
-        double price; int stock;
-        try { price = Double.parseDouble(priceStr); }
-        catch (NumberFormatException e) {
+        double price;
+        int stock;
+        try {
+            price = Double.parseDouble(priceStr);
+        } catch (NumberFormatException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Invalid price.");
             return null;
         }
-        try { stock = Integer.parseInt(stockStr); }
-        catch (NumberFormatException e) {
+        try {
+            stock = Integer.parseInt(stockStr);
+        } catch (NumberFormatException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Invalid stock.");
             return null;
         }
         Product p = new Product();
-        p.setName(name); p.setDescription(desc);
-        p.setPrice(price); p.setStock(stock); p.setCategory(cat);
+        p.setName(name);
+        p.setDescription(desc);
+        p.setPrice(price);
+        p.setStock(stock);
+        p.setCategory(cat);
         return p;
     }
 

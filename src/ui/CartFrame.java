@@ -97,7 +97,8 @@ public class CartFrame extends javax.swing.JFrame {
         lblTitle.setBackground(new java.awt.Color(39, 174, 96));
         lblTitle.setFont(new java.awt.Font("Georgia", 1, 20)); // NOI18N
         lblTitle.setForeground(new java.awt.Color(255, 255, 255));
-        lblTitle.setText("🛒  Your Shopping Cart");
+        lblTitle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/cart.png"))); // NOI18N
+        lblTitle.setText(" Your Shopping Cart");
         lblTitle.setPreferredSize(new java.awt.Dimension(750, 55));
         getContentPane().add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 

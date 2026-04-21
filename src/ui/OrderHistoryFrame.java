@@ -110,16 +110,17 @@ public class OrderHistoryFrame extends javax.swing.JFrame {
         orderTable = new javax.swing.JTable();
         btnClose = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Library Store — My Orders");
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblTitle.setBackground(new java.awt.Color(142, 68, 173));
         lblTitle.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
         lblTitle.setForeground(new java.awt.Color(255, 255, 255));
-        lblTitle.setText("📋  My Order History");
+        lblTitle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/checklist.png"))); // NOI18N
+        lblTitle.setText("My Order History");
         lblTitle.setPreferredSize(new java.awt.Dimension(680, 50));
-        getContentPane().add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        getContentPane().add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
 
         scrollPane.setPreferredSize(new java.awt.Dimension(660, 300));
 

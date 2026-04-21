@@ -23,6 +23,15 @@ public class HomeFrame extends javax.swing.JFrame {
     private javax.swing.table.DefaultTableModel tableModel;
 
     public HomeFrame(User user) {
+        if (user == null) {
+            initComponents();
+            javax.swing.JOptionPane.showMessageDialog(null,
+                    "Access denied. Please log in first.", "Unauthorized",
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
+            dispose();
+            new Loginframe().setVisible(true);
+            return;
+        }
         this.currentUser = user;
         initComponents();
         lblWelcome.setText("Hello, " + (user != null ? user.getFullName() : "Guest"));
@@ -100,7 +109,8 @@ public class HomeFrame extends javax.swing.JFrame {
 
         lblLogo.setFont(new java.awt.Font("Georgia", 1, 20)); // NOI18N
         lblLogo.setForeground(new java.awt.Color(255, 255, 255));
-        lblLogo.setText("📚 Library Store");
+        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/stack-of-books.png"))); // NOI18N
+        lblLogo.setText("Library Store");
         lblLogo.setPreferredSize(new java.awt.Dimension(220, 30));
         getContentPane().add(lblLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 15, -1, -1));
 

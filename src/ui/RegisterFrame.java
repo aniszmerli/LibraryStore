@@ -20,23 +20,29 @@ public class RegisterFrame extends javax.swing.JFrame {
 
     public RegisterFrame() {
         initComponents();
-        getContentPane().setBackground(new java.awt.Color(26, 188, 156));
+        getContentPane().setBackground(new java.awt.Color(44, 62, 80));
         setupPasswordMasking(txtPassword, realPassword);
         setupPasswordMasking(txtConfirm, realConfirm);
         setLocationRelativeTo(null);
     }
-    
-     /** Makes a plain JTextField behave like a password field (shows bullets, stores real text). */
+
+    /**
+     * Makes a plain JTextField behave like a password field (shows bullets,
+     * stores real text).
+     */
     private void setupPasswordMasking(javax.swing.JTextField field, StringBuilder realText) {
         field.setDocument(new javax.swing.text.PlainDocument() {
             @Override
             public void insertString(int offs, String str, javax.swing.text.AttributeSet a)
                     throws javax.swing.text.BadLocationException {
-                if (str == null) return;
+                if (str == null) {
+                    return;
+                }
                 realText.insert(offs, str);
                 String bullets = str.replaceAll(".", "•");
                 super.insertString(offs, bullets, a);
             }
+
             @Override
             public void remove(int offs, int len) throws javax.swing.text.BadLocationException {
                 realText.delete(offs, offs + len);
@@ -78,11 +84,11 @@ public class RegisterFrame extends javax.swing.JFrame {
 
         lblTitle.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         lblTitle.setForeground(new java.awt.Color(255, 255, 255));
-        lblTitle.setText("📚  Create Your Account");
+        lblTitle.setText(" + Create Your Account");
         getContentPane().add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 25, -1, -1));
 
         lblFullName.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        lblFullName.setForeground(new java.awt.Color(85, 85, 85));
+        lblFullName.setForeground(new java.awt.Color(255, 255, 255));
         lblFullName.setText("Full Name");
         getContentPane().add(lblFullName, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 90, -1, -1));
 
@@ -95,7 +101,7 @@ public class RegisterFrame extends javax.swing.JFrame {
         getContentPane().add(txtFullName, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 110, -1, -1));
 
         lblEmail.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblEmail.setForeground(new java.awt.Color(85, 85, 85));
+        lblEmail.setForeground(new java.awt.Color(255, 255, 255));
         lblEmail.setText("Email Address");
         getContentPane().add(lblEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 155, -1, -1));
 
@@ -105,7 +111,7 @@ public class RegisterFrame extends javax.swing.JFrame {
         getContentPane().add(txtEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 175, -1, -1));
 
         lblUsername.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblUsername.setForeground(new java.awt.Color(85, 85, 85));
+        lblUsername.setForeground(new java.awt.Color(255, 255, 255));
         lblUsername.setText("Username");
         getContentPane().add(lblUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 220, -1, -1));
 
@@ -114,7 +120,7 @@ public class RegisterFrame extends javax.swing.JFrame {
         getContentPane().add(txtUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 240, -1, -1));
 
         lblPassword.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblPassword.setForeground(new java.awt.Color(85, 85, 85));
+        lblPassword.setForeground(new java.awt.Color(255, 255, 255));
         lblPassword.setText("Password");
         getContentPane().add(lblPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 285, -1, -1));
 
@@ -123,7 +129,7 @@ public class RegisterFrame extends javax.swing.JFrame {
         getContentPane().add(txtPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 305, -1, -1));
 
         lblConfirm.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblConfirm.setForeground(new java.awt.Color(85, 85, 85));
+        lblConfirm.setForeground(new java.awt.Color(255, 255, 255));
         lblConfirm.setText("Confirm Password");
         getContentPane().add(lblConfirm, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 350, -1, -1));
 
@@ -145,7 +151,7 @@ public class RegisterFrame extends javax.swing.JFrame {
 
         btnRegister.setBackground(new java.awt.Color(26, 188, 156));
         btnRegister.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        btnRegister.setForeground(new java.awt.Color(255, 255, 255));
+        btnRegister.setForeground(new java.awt.Color(153, 153, 153));
         btnRegister.setText("CREATE ACCOUNT");
         btnRegister.setBorderPainted(false);
         btnRegister.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));

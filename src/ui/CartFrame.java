@@ -44,7 +44,7 @@ public class CartFrame extends javax.swing.JFrame {
 
     private void setupTable() {
         tableModel = new javax.swing.table.DefaultTableModel(
-                new String[]{"#", "Product", "Unit Price", "Qty", "Subtotal"}, 0) {
+                new String[]{"#", "Article", "Prix Unitaire", "Qty", "Total"}, 0) {
             public boolean isCellEditable(int r, int c) {
                 return false;
             }
@@ -63,14 +63,14 @@ public class CartFrame extends javax.swing.JFrame {
         for (OrderItem item : cart) {
             tableModel.addRow(new Object[]{
                 i++, item.getProduct().getName(),
-                String.format("$%.2f", item.getUnitPrice()),
+                String.format("TND%.2f", item.getUnitPrice()),
                 item.getQuantity(),
-                String.format("$%.2f", item.getSubtotal())
+                String.format("TND%.2f", item.getSubtotal())
             });
             total += item.getSubtotal();
         }
-        lblTotal.setText(cart.isEmpty() ? "Cart is empty"
-                : String.format("Total: $%.2f", total));
+        lblTotal.setText(cart.isEmpty() ? "Le panier est vide."
+                : String.format("Total: TND%.2f", total));
     }
 
     /**
@@ -98,7 +98,7 @@ public class CartFrame extends javax.swing.JFrame {
         lblTitle.setFont(new java.awt.Font("Georgia", 1, 20)); // NOI18N
         lblTitle.setForeground(new java.awt.Color(255, 255, 255));
         lblTitle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/cart.png"))); // NOI18N
-        lblTitle.setText(" Your Shopping Cart");
+        lblTitle.setText("Votre panier");
         lblTitle.setPreferredSize(new java.awt.Dimension(750, 55));
         getContentPane().add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
@@ -129,7 +129,7 @@ public class CartFrame extends javax.swing.JFrame {
         btnRemove.setBackground(new java.awt.Color(231, 76, 60));
         btnRemove.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnRemove.setForeground(new java.awt.Color(255, 255, 255));
-        btnRemove.setText("🗑 Remove");
+        btnRemove.setText("Retirer");
         btnRemove.setBorderPainted(false);
         btnRemove.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnRemove.setFocusPainted(false);
@@ -144,7 +144,7 @@ public class CartFrame extends javax.swing.JFrame {
         btnClear.setBackground(new java.awt.Color(149, 165, 166));
         btnClear.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnClear.setForeground(new java.awt.Color(255, 255, 255));
-        btnClear.setText("Clear Cart");
+        btnClear.setText("Vider le panier");
         btnClear.setBorderPainted(false);
         btnClear.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnClear.setFocusPainted(false);
@@ -158,7 +158,7 @@ public class CartFrame extends javax.swing.JFrame {
 
         btnCheckout.setBackground(new java.awt.Color(39, 174, 96));
         btnCheckout.setForeground(new java.awt.Color(255, 255, 255));
-        btnCheckout.setText("✔ Checkout");
+        btnCheckout.setText(" ✔ Vérifier");
         btnCheckout.setBorderPainted(false);
         btnCheckout.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnCheckout.setFocusPainted(false);
@@ -176,7 +176,7 @@ public class CartFrame extends javax.swing.JFrame {
     private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
         int row = cartTable.getSelectedRow();
         if (row == -1) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Select an item to remove.");
+            javax.swing.JOptionPane.showMessageDialog(this, "Sélectionnez un article à supprimer.");
             return;
         }
         cart.remove(row);
@@ -189,13 +189,13 @@ public class CartFrame extends javax.swing.JFrame {
     private void btnCheckoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckoutActionPerformed
         if (currentUser == null) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "You must be logged in to checkout.");
+                    "Vous devez être connecté pour finaliser votre commande..");
             return;
         }
 
         if (cart.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "Cart is empty.");
+                    "Le panier est vide.");
             return;
         }
 
@@ -204,8 +204,8 @@ public class CartFrame extends javax.swing.JFrame {
                 .sum();
 
         int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
-                "Confirm order?\nTotal: $" + total,
-                "Confirm",
+                "Confirmer la commande?\nTotal: TND" + total,
+                "Confirmer",
                 javax.swing.JOptionPane.YES_NO_OPTION);
 
         if (confirm != javax.swing.JOptionPane.YES_OPTION) {
@@ -217,13 +217,13 @@ public class CartFrame extends javax.swing.JFrame {
 
         if (orderId > 0) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "Order placed! ID: " + orderId);
+                    "Commande passée! ID: " + orderId);
             cart.clear();
             refreshCart();
             dispose();
         } else {
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "Order failed.");
+                    "La commande a échoué.");
 }    }//GEN-LAST:event_btnCheckoutActionPerformed
 
     /**

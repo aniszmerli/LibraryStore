@@ -84,12 +84,12 @@ public class RegisterFrame extends javax.swing.JFrame {
 
         lblTitle.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         lblTitle.setForeground(new java.awt.Color(255, 255, 255));
-        lblTitle.setText(" + Create Your Account");
-        getContentPane().add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 25, -1, -1));
+        lblTitle.setText(" + Créer un Compte ");
+        getContentPane().add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 25, -1, -1));
 
         lblFullName.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         lblFullName.setForeground(new java.awt.Color(255, 255, 255));
-        lblFullName.setText("Full Name");
+        lblFullName.setText("Nom Complet");
         getContentPane().add(lblFullName, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 90, -1, -1));
 
         txtFullName.setPreferredSize(new java.awt.Dimension(300, 36));
@@ -102,7 +102,7 @@ public class RegisterFrame extends javax.swing.JFrame {
 
         lblEmail.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lblEmail.setForeground(new java.awt.Color(255, 255, 255));
-        lblEmail.setText("Email Address");
+        lblEmail.setText("Adresse Email ");
         getContentPane().add(lblEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 155, -1, -1));
 
         txtEmail.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
@@ -112,7 +112,7 @@ public class RegisterFrame extends javax.swing.JFrame {
 
         lblUsername.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lblUsername.setForeground(new java.awt.Color(255, 255, 255));
-        lblUsername.setText("Username");
+        lblUsername.setText("Nom d'Utilisateur");
         getContentPane().add(lblUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 220, -1, -1));
 
         txtUsername.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
@@ -121,7 +121,7 @@ public class RegisterFrame extends javax.swing.JFrame {
 
         lblPassword.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lblPassword.setForeground(new java.awt.Color(255, 255, 255));
-        lblPassword.setText("Password");
+        lblPassword.setText("Mot de Passe");
         getContentPane().add(lblPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 285, -1, -1));
 
         txtPassword.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
@@ -130,7 +130,7 @@ public class RegisterFrame extends javax.swing.JFrame {
 
         lblConfirm.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lblConfirm.setForeground(new java.awt.Color(255, 255, 255));
-        lblConfirm.setText("Confirm Password");
+        lblConfirm.setText("Confirmer Mot de Passe");
         getContentPane().add(lblConfirm, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 350, -1, -1));
 
         txtConfirm.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
@@ -151,8 +151,8 @@ public class RegisterFrame extends javax.swing.JFrame {
 
         btnRegister.setBackground(new java.awt.Color(26, 188, 156));
         btnRegister.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        btnRegister.setForeground(new java.awt.Color(153, 153, 153));
-        btnRegister.setText("CREATE ACCOUNT");
+        btnRegister.setForeground(new java.awt.Color(255, 255, 255));
+        btnRegister.setText("CRÉER UN COMPTE");
         btnRegister.setBorderPainted(false);
         btnRegister.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnRegister.setFocusPainted(false);
@@ -166,7 +166,7 @@ public class RegisterFrame extends javax.swing.JFrame {
 
         btnBack.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         btnBack.setForeground(new java.awt.Color(22, 160, 133));
-        btnBack.setText("Already have an account? Login");
+        btnBack.setText("Vous avez déjà un compte ? Se connecter");
         btnBack.setBorderPainted(false);
         btnBack.setContentAreaFilled(false);
         btnBack.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -189,34 +189,34 @@ public class RegisterFrame extends javax.swing.JFrame {
         String confirm = realConfirm.toString();
 
         if (fullName.isEmpty() || email.isEmpty() || username.isEmpty() || password.isEmpty()) {
-            showStatus("All fields are required.", java.awt.Color.RED);
+            showStatus("Tous les champs sont obligatoires.", java.awt.Color.RED);
             return;
         }
         if (password.length() < 6) {
-            showStatus("Password must be at least 6 characters.", java.awt.Color.RED);
+            showStatus("Le mot de passe doit comporter au moins 6 caractères.", java.awt.Color.RED);
             return;
         }
         if (!password.equals(confirm)) {
-            showStatus("Passwords do not match.", java.awt.Color.RED);
+            showStatus("Les mots de passe ne correspondent pas.", java.awt.Color.RED);
             return;
         }
         if (!email.contains("@") || !email.contains(".")) {
-            showStatus("Enter a valid email address.", java.awt.Color.RED);
+            showStatus("Veuillez saisir une adresse courriel valide.", java.awt.Color.RED);
             return;
         }
         UserDAO dao = new UserDAO();
         if (dao.usernameExists(username)) {
-            showStatus("Username already taken.", java.awt.Color.RED);
+            showStatus("Nom d'utilisateur déjà pris.", java.awt.Color.RED);
             return;
         }
         if (dao.register(username, password, email, fullName)) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "Account created! You can now log in.", "Success",
+                    "Compte créé ! Vous pouvez maintenant vous connecter.", "Succès",
                     javax.swing.JOptionPane.INFORMATION_MESSAGE);
             dispose();
             new Loginframe().setVisible(true);
         } else {
-            showStatus("Registration failed. Email may already exist.", java.awt.Color.RED);
+            showStatus("L'inscription a échoué. Cette adresse e-mail existe peut-être déjà.", java.awt.Color.RED);
         }
     }//GEN-LAST:event_btnRegisterActionPerformed
 

@@ -33,7 +33,7 @@ public class OrderHistoryFrame extends javax.swing.JFrame {
         orderTable.setGridColor(new java.awt.Color(236, 240, 241));
         orderTable.setSelectionBackground(new java.awt.Color(214, 234, 248));
         orderTable.setSelectionForeground(java.awt.Color.BLACK);
-        lblTitle.setText("📋  My Order History — "
+        lblTitle.setText("📋  Historique de mes commandes — "
                 + (user != null ? user.getFullName() : ""));
         setLocationRelativeTo(null);
         loadOrders();
@@ -41,7 +41,7 @@ public class OrderHistoryFrame extends javax.swing.JFrame {
 
     private void setupTable() {
         tableModel = new javax.swing.table.DefaultTableModel(
-                new String[]{"Order ID", "Total", "Status", "Date"}, 0) {
+                new String[]{"ID du Commande", "Total", "Status", "Date"}, 0) {
             public boolean isCellEditable(int r, int c) {
                 return false;
             }
@@ -64,13 +64,13 @@ public class OrderHistoryFrame extends javax.swing.JFrame {
                 if (!sel && tableModel.getRowCount() > r) {
                     String status = tableModel.getValueAt(r, 2).toString();
                     switch (status) {
-                        case "confirmed":
+                        case "confirmée":
                             comp.setBackground(new java.awt.Color(213, 245, 227));
                             break;
-                        case "pending":
+                        case "en attente":
                             comp.setBackground(new java.awt.Color(254, 249, 231));
                             break;
-                        case "cancelled":
+                        case "annulée":
                             comp.setBackground(new java.awt.Color(250, 220, 220));
                             break;
                         default:
@@ -88,7 +88,7 @@ public class OrderHistoryFrame extends javax.swing.JFrame {
         OrderDAO dao = new OrderDAO();
         java.util.List<String[]> orders = dao.getOrderHistory(currentUser.getId());
         if (orders.isEmpty()) {
-            tableModel.addRow(new String[]{"—", "—", "No orders yet", "—"});
+            tableModel.addRow(new String[]{"—", "—", "Aucune commande", "—"});
         } else {
             for (String[] row : orders) {
                 tableModel.addRow(row);
@@ -118,7 +118,7 @@ public class OrderHistoryFrame extends javax.swing.JFrame {
         lblTitle.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
         lblTitle.setForeground(new java.awt.Color(255, 255, 255));
         lblTitle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/checklist.png"))); // NOI18N
-        lblTitle.setText("My Order History");
+        lblTitle.setText("Historique De Mes Commandes");
         lblTitle.setPreferredSize(new java.awt.Dimension(680, 50));
         getContentPane().add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
 
@@ -143,7 +143,7 @@ public class OrderHistoryFrame extends javax.swing.JFrame {
         btnClose.setBackground(new java.awt.Color(142, 68, 173));
         btnClose.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnClose.setForeground(new java.awt.Color(255, 255, 255));
-        btnClose.setText("Close");
+        btnClose.setText("Fermer");
         btnClose.setBorderPainted(false);
         btnClose.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnClose.setFocusPainted(false);

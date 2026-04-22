@@ -49,21 +49,21 @@ public class Loginframe extends javax.swing.JFrame {
         lblLogo.setFont(new java.awt.Font("Segoe UI Emoji", 0, 48)); // NOI18N
         lblLogo.setForeground(new java.awt.Color(255, 255, 255));
         lblLogo.setText("📚");
-        getContentPane().add(lblLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 30, 70, 60));
+        getContentPane().add(lblLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 30, 70, 60));
 
         lblTitle.setFont(new java.awt.Font("Gabriola", 1, 26)); // NOI18N
         lblTitle.setForeground(new java.awt.Color(255, 255, 255));
-        lblTitle.setText("Library Store");
-        getContentPane().add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 100, 120, -1));
+        lblTitle.setText("Smart Info");
+        getContentPane().add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 100, 120, -1));
 
         lblSub.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
         lblSub.setForeground(new java.awt.Color(189, 195, 199));
-        lblSub.setText("Books, notebooks, pens & more");
-        getContentPane().add(lblSub, new org.netbeans.lib.awtextra.AbsoluteConstraints(105, 140, -1, -1));
+        lblSub.setText("Livres, cahiers, stylos et plus encore");
+        getContentPane().add(lblSub, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 140, -1, -1));
 
         lblUser.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lblUser.setForeground(new java.awt.Color(255, 255, 255));
-        lblUser.setText("Username");
+        lblUser.setText("Nom d'utilisateur");
         getContentPane().add(lblUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 185, -1, -1));
 
         txtUsername.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
@@ -77,7 +77,7 @@ public class Loginframe extends javax.swing.JFrame {
 
         Password.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         Password.setForeground(new java.awt.Color(255, 255, 255));
-        Password.setText("Password");
+        Password.setText("Mot de Passe");
         getContentPane().add(Password, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 255, -1, -1));
 
         lblStatus.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
@@ -90,7 +90,7 @@ public class Loginframe extends javax.swing.JFrame {
         btnLogin.setBackground(new java.awt.Color(41, 128, 185));
         btnLogin.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnLogin.setForeground(new java.awt.Color(255, 255, 255));
-        btnLogin.setText("LOGIN");
+        btnLogin.setText("SE CONNECTER");
         btnLogin.setBorderPainted(false);
         btnLogin.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnLogin.setFocusPainted(false);
@@ -104,7 +104,7 @@ public class Loginframe extends javax.swing.JFrame {
 
         btnRegister.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         btnRegister.setForeground(new java.awt.Color(41, 128, 185));
-        btnRegister.setText("Don't have an account? Register here");
+        btnRegister.setText("Vous n'avez pas de compte ? Inscrivez-vous ici");
         btnRegister.setBorderPainted(false);
         btnRegister.setContentAreaFilled(false);
         btnRegister.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -132,14 +132,14 @@ public class Loginframe extends javax.swing.JFrame {
         String username = txtUsername.getText().trim();
         String password = new String(txtPassword.getPassword()).trim();
         if (username.isEmpty() || password.isEmpty()) {
-            lblStatus.setText("Please fill in all fields.");
+            lblStatus.setText("Veuillez remplir tous les champs.");
             return;
         }
         UserDAO dao = new UserDAO();
         User user = dao.login(username, password);
         if (user != null) {
             lblStatus.setForeground(new java.awt.Color(39, 174, 96));
-            lblStatus.setText("Welcome, " + user.getFullName() + "!");
+            lblStatus.setText("Bonjour, " + user.getFullName() + "!");
             dispose();
             if (user.isAdmin()) {
                 new AdminFrame(user).setVisible(true);
@@ -148,7 +148,7 @@ public class Loginframe extends javax.swing.JFrame {
             }
         } else {
             lblStatus.setForeground(java.awt.Color.RED);
-            lblStatus.setText("Invalid username or password.");
+            lblStatus.setText("Nom d'utilisateur ou mot de passe incorrect.");
             txtPassword.setText("");
         }
     }//GEN-LAST:event_btnLoginActionPerformed
